@@ -14,10 +14,10 @@ tab_width=4
 tab_use_spaces=1
 explorer_path=.
 inherits_from=
-current_source=ponts.cpp
+current_source=src/ponts.cpp
 path_char=/
 [source]
-path=ponts.cpp
+path=src/ponts.cpp
 cursor=28:0
 open=true
 [config]
