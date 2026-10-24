@@ -1,157 +1,185 @@
 #include <iostream>
-#include <stdlib.h>
+#include <vector>
+#include <stack>
+#include <algorithm>
 
 #define MAX 20
 
 class Puente
 {
-	int *v;
-    int Arcs, Nodes, Vindex;
+	int Arcs, Nodes;
 	int m[MAX][MAX];
+	std::vector<int> path;
 
 public:
-	Puente (int,int);
-	~Puente() { delete[] v; }
-
-	bool ParseGraf(int,int);
-	int GetIndex() { return Vindex; }
-	int CercaArc(int,int);
+	Puente(int,int);
 	void InsertaArc(int,int);
-	void LlevaArc(int,int);
-	void PutNode(int node) { v[Vindex] = node; }
-	void IncIndex() { Vindex++; }
-	int  GetNode() { return v[Vindex]; }
-	void DecIndex() { Vindex--; }
-	void MatriuACeros(void);
-	void Print();
+	int Grado(int) const;
+	bool Conexo() const;
+	bool Euleriano(int&) const;
+	void Hierholzer(int);
+	void Print() const;
 };
 
-unsigned long Fact(int n)
+Puente::Puente(int nodos,int narcs) : Arcs(narcs), Nodes(nodos)
 {
-	unsigned long s = 1;
-	if (n == 0) return 1;
-	if (n >= 3) for (int c=2; c <= n; c++)  s = s * c;
-	   else return n;
-	return s;
+	int i,j;
+	for ( i=0; i < MAX; i++)
+		for ( j=0; j < MAX; j++) { m[i][j] = 0; }
 };
-
-Puente::Puente(int nodos,int narcs)
-{
-	long var=0;
-	Vindex = 0;
-	Arcs = narcs;
-	Nodes = nodos;
-	var = Fact(Nodes)/(2 * Fact(Nodes-2)) + 1;
-	v = new int[var];
-	MatriuACeros();
-};
-
-void Puente::Print()
-{
-  std::cout << std::endl << "Solució al graf.:" << std::endl;
-  for (int c=0; c < Arcs+1; c++) std::cout << v[c] << " ";
-  std::cout << std::endl;
-};
-
-int Puente::CercaArc(int n2, int n1)
-{
-  int c;
-  if (n2 >= Nodes)
-	return n2;
-  for ( c = n2; c < Nodes; c++) {
-	if (m[n1][c])
-		return c;
-  }
-  return c;
-}
 
 void Puente::InsertaArc(int n1,int n2)
 {
+	if (n1 < 0 || n1 >= Nodes || n2 < 0 || n2 >= Nodes) return;
 	m[n1][n2] += 1;
 	m[n2][n1] += 1;
 };
 
-void Puente::LlevaArc(int n1,int n2)
+int Puente::Grado(int n) const
 {
-	m[n1][n2] -= 1;
-	m[n2][n1] -= 1;
-};
+	int g = 0;
+	for (int c = 0; c < Nodes; c++) g += m[n][c];
+	return g;
+}
 
-void Puente::MatriuACeros(void)
+bool Puente::Conexo() const
 {
-  int i,j;
-  for ( i=0; i < MAX; i++)
-	for ( j=0; j < MAX; j++) { m[i][j] = 0; }
-};
+	int start = -1;
+	for (int i = 0; i < Nodes; i++) if (Grado(i) > 0) { start = i; break; }
+	if (start == -1) return true;
 
-bool Puente::ParseGraf(int num1,int num2) {
+	bool vis[MAX] = {false};
+	std::stack<int> st;
+	st.push(start);
+	vis[start] = true;
 
-	int n1 = num1;
-	int n2 = num2;
-
-	while ( GetIndex() < Arcs) {
-		if( (n2 = CercaArc(n2,n1)) >= Nodes)
+	while (!st.empty())
+	{
+		int u = st.top(); st.pop();
+		for (int v = 0; v < Nodes; v++)
 		{
-			if ( GetIndex() >= 1)
+			if (m[u][v] > 0 && !vis[v])
 			{
-				n2 = GetNode();
-				DecIndex();
-				n1 = GetNode();
-				InsertaArc(n1,n2);
-				n2++;
-				continue;
+				vis[v] = true;
+				st.push(v);
 			}
-
-			n1++;
-
-			if ( n1 >= Nodes)
-				return false;
-
-			PutNode(n1);
-			n2 = 0;
-			continue;
 		}
-		LlevaArc(n1,n2);
-		IncIndex();
-		PutNode(n2);
-		n1 = n2;
-		n2 = 0;
 	}
+
+	for (int i = 0; i < Nodes; i++)
+		if (Grado(i) > 0 && !vis[i]) return false;
 	return true;
+}
+
+bool Puente::Euleriano(int& start) const
+{
+	int impares = 0;
+	int nodoImpar = -1;
+	int nodoConAristas = -1;
+
+	for (int i = 0; i < Nodes; i++)
+	{
+		int g = Grado(i);
+		if (g > 0) nodoConAristas = i;
+		if (g % 2 != 0)
+		{
+			impares++;
+			nodoImpar = i;
+		}
+	}
+
+	if (impares != 0 && impares != 2) return false;
+	if (!Conexo()) return false;
+
+	if (impares == 2) start = nodoImpar;
+	else start = nodoConAristas;
+
+	return true;
+}
+
+void Puente::Hierholzer(int start)
+{
+	int mm[MAX][MAX];
+	int i,j;
+	for ( i=0; i < MAX; i++)
+		for ( j=0; j < MAX; j++) mm[i][j] = m[i][j];
+
+	std::stack<int> st;
+	st.push(start);
+	int curr = start;
+
+	while (!st.empty())
+	{
+		bool hay = false;
+		for (int v = 0; v < Nodes; v++)
+		{
+			if (mm[curr][v] > 0)
+			{
+				mm[curr][v]--;
+				mm[v][curr]--;
+				st.push(curr);
+				curr = v;
+				hay = true;
+				break;
+			}
+		}
+		if (!hay)
+		{
+			path.push_back(curr);
+			curr = st.top();
+			st.pop();
+		}
+	}
+
+	std::reverse(path.begin(), path.end());
+}
+
+void Puente::Print() const
+{
+	std::cout << std::endl << "Solució al graf.:" << std::endl;
+	for (size_t c = 0; c < path.size(); c++) std::cout << path[c] << " ";
+	std::cout << std::endl;
 }
 
 int main(void)
 {
-	int Arcs,Nodes;
+	int Arcs, Nodes;
 
-	std::cout << "Quants de Nodes té el teu graf (MAX="<<MAX<<")..: ";
+	std::cout << "Quants de Nodes té el teu graf (MAX=" << MAX << ")..: ";
 	std::cin >> Nodes;
-	std::cout << "Nombre total d'arcs interconectats.......: ";
-	std::cin >> Arcs;
-
-	Puente Pont(Nodes,Arcs);
-
-	int n1=0;
-    int n2=0;
-
-    for (int c = 0; c < Arcs; ++c) {
-	  std::cout << "Coordenada de l'arc nº " << c+1 << " : ";
-	  std::cin >> n1 >> n2;
-	  Pont.InsertaArc(n1, n2);
-	};
-
-	std::cout << "A partir de quin arc cerc la solució...: ";
-	std::cin >> n1 >> n2;
-
-	Pont.PutNode(n1);
-
-	if (Pont.ParseGraf(n1,n2)) {
-        Pont.Print();
-        return 0;
-    } else {
-		std::cout << std::endl << "Desde l'arc indicat el graf no té solució." << std::endl;
+	if (Nodes <= 0 || Nodes > MAX) {
+		std::cout << "Nombre de nodes no vàlid." << std::endl;
 		return 1;
 	}
+	std::cout << "Nombre total d'arcs interconectats.......: ";
+	std::cin >> Arcs;
+	if (Arcs < 0) {
+		std::cout << "Nombre d'arcs no vàlid." << std::endl;
+		return 1;
+	}
+
+	Puente Pont(Nodes, Arcs);
+
+	for (int c = 0; c < Arcs; ++c)
+	{
+		int n1, n2;
+		std::cout << "Coordenada de l'arc nº " << c + 1 << " : ";
+		std::cin >> n1 >> n2;
+		if (n1 < 0 || n1 >= Nodes || n2 < 0 || n2 >= Nodes) {
+			std::cout << "Node fora de rang (0.." << (Nodes-1) << ")." << std::endl;
+			return 1;
+		}
+		Pont.InsertaArc(n1, n2);
+	}
+
+	int start;
+	if (!Pont.Euleriano(start)) {
+		std::cout << std::endl << "El graf no té camí ni circuít eulèri." << std::endl;
+		return 1;
+	}
+
+	std::cout << "Node d'inici: " << start << std::endl;
+	Pont.Hierholzer(start);
+	Pont.Print();
+	return 0;
 }
-
-
