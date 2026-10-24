@@ -1,2 +1,2 @@
 # ponts
-Ponts de koningberg
+Ponts de koninsgberg
