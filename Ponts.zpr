@@ -18,7 +18,7 @@ current_source=src/ponts.cpp
 path_char=/
 [source]
 path=src/ponts.cpp
-cursor=28:0
+cursor=99:34
 open=true
 [config]
 name=Debug
