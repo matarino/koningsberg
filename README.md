@@ -1,4 +1,4 @@
-# 🌉 Ponts de Königsberg — Calculadora de l'únic camí
+# 🌉 Ponts de Königsberg — El camí únic
 
 Juego/calculadora educativa en C++ inspirada en el **clásico problema de los siete puentes de Königsberg** (1736), el reto que dio origen a la **teoría de grafos** gracias a Leonhard Euler.
 
