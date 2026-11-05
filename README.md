@@ -68,10 +68,20 @@ Cambia los grados de los nodos y verás cómo el mensaje cambia a
 koningsberg/
 ├── Ponts.zpr        # proyecto de ZinJai
 ├── README.md
-├── doc/             # referencia del algoritmo de Hierholzer (implementación de estudio)
+├── llms.txt         # índice de documentación para IAs (convención llms.txt / GitMCP)
+├── docs/            # documentación + implementaciones de referencia de Hierholzer
+│   ├── api-reference.md   # contrato completo de la clase `Puente`
+│   ├── usage.md           # formato de entrada y trazas de ejecución reales
+│   ├── Hierholzer.cpp     # referencia del algoritmo (dirigido)
+│   └── hielholzer.d       # referencia del algoritmo en D (no dirigido)
 └── src/
     └── ponts.cpp    # clase `Puente`: matriz de adyacencia, Euler y Hierholzer
 ```
+
+## 📚 Documentación
+
+- **[Referencia de la API](docs/api-reference.md)** — contrato completo de `Puente`: multigrafo con matriz de adyacencia, grados, conectividad, condición de Euler y Hierholzer paso a paso.
+- **[Guía de uso y ejemplos](docs/usage.md)** — formato de entrada y ejecuciones reales (mapa histórico de Königsberg, puente repetido, circuito de 7 aristas).
 
 ## 🛠️ Detalles de implementación
 

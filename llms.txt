@@ -1,0 +1,18 @@
+# Ponts de Königsberg
+
+> Juego/calculadora educativa en C++ inspirada en el clásico problema de los siete puentes de Königsberg (1736). Modela un multigrafo (orillas como vértices, puentes como aristas), comprueba la condición de Euler (conectividad + 0 o 2 vértices de grado impar) y construye el camino/circuito euleriano con el algoritmo de Hierholzer.
+
+La teoría de grafos nació aquí: Euler demostró que es imposible recorrer las 4 orillas de Königsberg cruzando cada uno de sus 7 puentes exactamente una vez, porque los 4 vértices tienen grado impar (grados 3, 5, 3 y 3).
+
+## Docs
+
+- [Referencia de la API (clase Puente)](https://raw.githubusercontent.com/matarino/koningsberg/main/docs/api-reference.md): contracto completo de la clase `Puente` en `src/ponts.cpp` — constructor, multigrafo con matriz de adyacencia, grados, conectividad, condición de Euler y Hierholzer.
+- [Guía de uso y ejemplos](https://raw.githubusercontent.com/matarino/koningsberg/main/docs/usage.md): compilación, formato de entrada y trazas de ejecución reales (mapa histórico de Königsberg, puente repetido en multigrafo, circuito euleriano de 7 aristas).
+- [Detalles de implementación y contexto histórico](https://github.com/matarino/koningsberg#-detalles-de-implementación): README con el argumento de Euler, la tabla de grados impares, la estructura del proyecto y las referencias académicas.
+
+## Código fuente
+
+- [src/ponts.cpp](https://raw.githubusercontent.com/matarino/koningsberg/main/src/ponts.cpp): implementación única del programa (clase `Puente` + `main`). C++11, sin dependencias externas.
+- [docs/Hierholzer.cpp](https://raw.githubusercontent.com/matarino/koningsberg/main/docs/Hierholzer.cpp): implementación de referencia del algoritmo de Hierholzer (dirigido, basada en GeeksforGeeks).
+- [docs/hielholzer.d](https://raw.githubusercontent.com/matarino/koningsberg/main/docs/hielholzer.d): misma referencia algoritmo escrita en D (no dirigido).
+- [.atic/puentes.cpp](https://raw.githubusercontent.com/matarino/koningsberg/main/.atic/puentes.cpp): variante anterior/alterna de la solución de puentes.
